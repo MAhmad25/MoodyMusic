@@ -21,10 +21,3 @@ const upload = async (file) => {
 };
 
 module.exports = upload;
-// const
-
-// const url = client.helper.buildSrc({
-//       urlEndpoint: "https://ik.imagekit.io/your_imagekit_id",
-//       src: "/path/to/image.jpg",
-// });
-// Result: https://ik.imagekit.io/your_imagekit_id/path/to/image.jpg
