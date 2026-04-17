@@ -1,4 +1,4 @@
-const required = ["PORT", "DB_URL", "IMAGEKIT_PRIVATE_KEY", "JWT_SECRET", "IMAGEKIT_URL", "IMAGEKIT_PUBLIC_KEY"];
+const required = ["PORT", "DB_URL", "FRONTEND_URL", "IMAGEKIT_PRIVATE_KEY", "IMAGEKIT_URL", "IMAGEKIT_PUBLIC_KEY"];
 
 required.forEach((key) => {
       if (!process.env[key]) {
@@ -12,5 +12,5 @@ module.exports = {
       IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
       IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY,
       IMAGEKIT_URL: process.env.IMAGEKIT_URL,
-      JWT_SECRET: process.env.JWT_SECRET,
+      FRONTEND_URL: process.env.FRONTEND_URL,
 };
