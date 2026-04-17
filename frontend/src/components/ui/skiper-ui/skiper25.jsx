@@ -2,10 +2,11 @@ import { motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 import { useMusicContext } from "@/context/MusicContext";
+import { Loader } from "../loader";
 
 const MusicButton = ({ music }) => {
       return (
-            <div className="flex h-full w-full flex-col items-center justify-center">
+            <div className="flex h-full w-full flex-col  items-center justify-center">
                   <MusicToggleButton music={music} />
             </div>
       );
@@ -17,7 +18,8 @@ export const MusicToggleButton = ({ music }) => {
       const bars = 5;
       const MotionDiv = motion.div;
       const currentPlayingRef = useRef(null);
-      const { currentPlayingUrl, setPlayingMusic, stopCurrentMusic, setMusicLoading } = useMusicContext();
+      const playAfterLoadRef = useRef(false);
+      const { currentPlayingUrl, loadingUrl, setPlayingMusic, stopCurrentMusic, setMusicLoading, clearMusicLoading } = useMusicContext();
 
       const getRandomHeights = () => {
             return Array.from({ length: bars }, () => Math.random() * 0.8 + 0.2);
@@ -26,6 +28,8 @@ export const MusicToggleButton = ({ music }) => {
       const [heights, setHeights] = useState(Array(bars).fill(0.1));
 
       const [isPlaying, setIsPlaying] = useState(false);
+
+      const isLoadingThisTrack = loadingUrl === music && !isPlaying;
 
       useEffect(() => {
             currentPlayingRef.current = currentPlayingUrl;
@@ -37,9 +41,10 @@ export const MusicToggleButton = ({ music }) => {
             }
       };
 
-      const [play, { stop }] = useSound(music, {
+      const [play, { stop, sound }] = useSound(music, {
             loop: true,
             onplay: () => {
+                  playAfterLoadRef.current = false;
                   setIsPlaying(true);
                   setHeights(getRandomHeights());
                   setPlayingMusic(music, stop);
@@ -58,6 +63,10 @@ export const MusicToggleButton = ({ music }) => {
                   setIsPlaying(false);
                   setHeights(Array(bars).fill(0.1));
                   clearIfCurrentTrack();
+            },
+            onloaderror: () => {
+                  playAfterLoadRef.current = false;
+                  clearMusicLoading();
             },
             soundEnabled: true,
       });
@@ -80,22 +89,49 @@ export const MusicToggleButton = ({ music }) => {
             }
       }, [currentPlayingUrl, isPlaying, music, stop]);
 
+      useEffect(() => {
+            if (loadingUrl !== music) {
+                  playAfterLoadRef.current = false;
+            }
+      }, [loadingUrl, music]);
+
+      useEffect(() => {
+            if (!sound || !playAfterLoadRef.current) return;
+            if (loadingUrl !== music) return;
+            if (isPlaying) return;
+            play();
+      }, [sound, music, loadingUrl, play, isPlaying]);
+
       const handleClick = () => {
             if (isPlaying) {
+                  playAfterLoadRef.current = false;
                   stop();
                   stopCurrentMusic({ invokeStop: false });
                   return;
             }
-            setMusicLoading(music);
+            if (isLoadingThisTrack) {
+                  return;
+            }
             if (currentPlayingUrl && currentPlayingUrl !== music) {
                   stopCurrentMusic();
             }
+            playAfterLoadRef.current = true;
+            setMusicLoading(music);
             play();
       };
 
       return (
             <>
-                  <MotionDiv onClick={handleClick} key="audio" initial={{ padding: "0px 5px" }} whileHover={{ padding: "0px 7px " }} whileTap={{ padding: "2px 2px " }} transition={{ duration: 1, bounce: 0.2, type: "spring" }} className="bg-background cursor-pointer rounded-full p-2">
+                  <MotionDiv
+                        onClick={handleClick}
+                        key="audio"
+                        initial={{ padding: "0px 5px" }}
+                        whileHover={isLoadingThisTrack ? undefined : { padding: "0px 7px " }}
+                        whileTap={isLoadingThisTrack ? undefined : { padding: "2px 2px " }}
+                        transition={{ duration: 1, bounce: 0.2, type: "spring" }}
+                        aria-busy={isLoadingThisTrack}
+                        className={`bg-background relative rounded-full p-2 ${isLoadingThisTrack ? "pointer-events-none cursor-default" : "cursor-pointer"}`}
+                  >
                         <MotionDiv
                               initial={{ opacity: 0, filter: "blur(4px)" }}
                               animate={{
@@ -104,7 +140,7 @@ export const MusicToggleButton = ({ music }) => {
                               }}
                               exit={{ opacity: 0, filter: "blur(4px)" }}
                               transition={{ type: "spring", bounce: 0.35 }}
-                              className="flex h-[18px] w-full items-center gap-1 rounded-full"
+                              className="flex h-[18px] w-full min-w-[40px] items-center justify-center gap-1 rounded-full"
                         >
                               {/* Waveform visualization */}
                               {heights.map((height, index) => (
@@ -123,6 +159,11 @@ export const MusicToggleButton = ({ music }) => {
                                     />
                               ))}
                         </MotionDiv>
+                        {isLoadingThisTrack ? (
+                              <div className="absolute inset-0 flex items-center justify-center rounded-full bg-background/80">
+                                    <Loader />
+                              </div>
+                        ) : null}
                   </MotionDiv>
             </>
       );

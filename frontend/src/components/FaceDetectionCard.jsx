@@ -8,6 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".
 import { MusicButton } from "./ui/skiper-ui/skiper25";
 import instance from "@/axios/base";
 import { useMusicContext } from "@/context/MusicContext";
+import { Loader } from "./ui/loader";
 
 export default function FaceDetectionCard() {
       const videoRef = useRef(null);
@@ -75,28 +76,33 @@ export default function FaceDetectionCard() {
                               </div>
                         </CardFooter>
                   </Card>
-                  {musics.length > 0 && <TableUsersDemo musics={musics} />}
+                  {musics.length > 0 ? <TableUsersDemo musics={musics} /> : expression && <Loader />}
             </div>
       );
 }
 
 export function TableUsersDemo({ musics }) {
       return (
-            <div className="bg-background w-full md:w-fit h-1/2">
-                  <Badge variant="secondary" className={"text-2xl py-3"}>
-                        Musics
-                  </Badge>
-                  <Table className="w-full max-w-3xl">
+            <div className="bg-background w-full md:w-fit h-1/2 ">
+                  <Table className="w-full max-w-3xl overflow-hidden">
                         <TableHeader>
                               <TableRow>
-                                    <TableHead>Music Name</TableHead>
-                                    <TableHead>Play/Pause</TableHead>
+                                    <TableHead>
+                                          <Badge variant="secondary" className={"text-xl py-3"}>
+                                                Music Name
+                                          </Badge>
+                                    </TableHead>
+                                    <TableHead>
+                                          <Badge variant="secondary" className={"text-xl py-3"}>
+                                                Play/Pause
+                                          </Badge>
+                                    </TableHead>
                               </TableRow>
                         </TableHeader>
                         <TableBody>
                               {musics?.map((music, i) => (
                                     <TableRow key={music._id} index={i}>
-                                          <TableCell className="font-[inherit]">{music.title}</TableCell>
+                                          <TableCell className="font-[inherit] text-[1.15rem]">{music.title}</TableCell>
                                           <TableCell>
                                                 <MusicButton music={music.audio_url} />
                                           </TableCell>

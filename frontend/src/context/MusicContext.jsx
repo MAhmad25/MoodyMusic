@@ -33,7 +33,19 @@ export const MusicProvider = ({ children }) => {
             setLoadingUrl(url);
       }, []);
 
-      return <MusicContext.Provider value={{ currentPlayingUrl, loadingUrl, setPlayingMusic, stopCurrentMusic, setMusicLoading }}>{children}</MusicContext.Provider>;
+      const clearMusicLoading = useCallback(() => {
+            setLoadingUrl(null);
+      }, []);
+
+      const states = {
+            currentPlayingUrl,
+            loadingUrl,
+            setPlayingMusic,
+            stopCurrentMusic,
+            setMusicLoading,
+            clearMusicLoading,
+      };
+      return <MusicContext.Provider value={states}>{children}</MusicContext.Provider>;
 };
 
 export const useMusicContext = () => {
