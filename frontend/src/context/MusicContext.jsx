@@ -11,7 +11,6 @@ export const MusicProvider = ({ children }) => {
       const stopCurrentMusic = useCallback((options = {}) => {
             const { invokeStop = true } = options;
             if (invokeStop && stopFunctionRef.current) {
-                  console.log("Stopping current music with stop function");
                   stopFunctionRef.current();
             }
             currentPlayingUrlRef.current = null;
@@ -21,10 +20,7 @@ export const MusicProvider = ({ children }) => {
       }, []);
 
       const setPlayingMusic = useCallback((url, stop) => {
-            console.log("Setting playing music:", url, "Previous URL:", currentPlayingUrlRef.current);
-            // Stop any currently playing music
             if (stopFunctionRef.current && currentPlayingUrlRef.current !== url) {
-                  console.log("Stopping previous music");
                   stopFunctionRef.current();
             }
             currentPlayingUrlRef.current = url;

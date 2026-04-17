@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 import { Button } from "./ui/button";
 import { ScanFaceIcon } from "lucide-react";
-
 import { Badge } from "./ui/badge";
 import { Card, CardAction, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "../components/ui/table";
@@ -47,7 +46,6 @@ export default function FaceDetectionCard() {
       const init = useCallback(async () => {
             await loadModels();
             await instance.get(`get-music?mood=${expression}`).then((res) => {
-                  console.log(res.data);
                   setMusics(res.data.data);
             });
       }, [expression]);
@@ -63,7 +61,7 @@ export default function FaceDetectionCard() {
             <div className="flex justify-center flex-col md:flex-row w-full h-full items-center gap-5">
                   <Card className="relative w-full h-full max-w-sm pt-0">
                         <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
-                        {videoRef && <video className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40" ref={videoRef} autoPlay muted playsInline />}
+                        {videoRef && <video className="relative z-20 aspect-video w-full object-cover" ref={videoRef} autoPlay muted playsInline />}
                         <CardHeader>
                               <CardAction>{expression && <Badge className="bg-sky-50 uppercase font-semibold text-sky-800 text-xl dark:bg-sky-950 dark:text-sky-300">{expression && expression}</Badge>}</CardAction>
                               <CardTitle className={"font-semibold"}>{expression ? "Your Expressions" : "Press the button to check you expression"}</CardTitle>
@@ -77,7 +75,7 @@ export default function FaceDetectionCard() {
                               </div>
                         </CardFooter>
                   </Card>
-                  {expression && <TableUsersDemo musics={musics} />}
+                  {musics.length > 0 && <TableUsersDemo musics={musics} />}
             </div>
       );
 }
@@ -86,13 +84,12 @@ export function TableUsersDemo({ musics }) {
       return (
             <div className="bg-background w-full md:w-fit h-1/2">
                   <Badge variant="secondary" className={"text-2xl py-3"}>
-                        Result
+                        Musics
                   </Badge>
                   <Table className="w-full max-w-3xl">
                         <TableHeader>
                               <TableRow>
                                     <TableHead>Music Name</TableHead>
-
                                     <TableHead>Play/Pause</TableHead>
                               </TableRow>
                         </TableHeader>
