@@ -104,9 +104,9 @@ export const MusicToggleButton = ({ music }) => {
 
       const handleClick = () => {
             if (isPlaying) {
-                  stopCurrentMusic({ invokeStop: false });
                   playAfterLoadRef.current = false;
                   stop();
+                  stopCurrentMusic({ invokeStop: false });
                   return;
             }
             if (isLoadingThisTrack) {

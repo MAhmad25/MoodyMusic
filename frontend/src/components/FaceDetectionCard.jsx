@@ -34,7 +34,6 @@ export default function FaceDetectionCard() {
       };
 
       const runDetection = async () => {
-            setMusics([]);
             await startCamera();
             if (!videoRef.current) return;
             const result = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
