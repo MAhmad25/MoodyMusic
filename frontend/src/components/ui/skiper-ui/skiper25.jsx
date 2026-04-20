@@ -104,9 +104,9 @@ export const MusicToggleButton = ({ music }) => {
 
       const handleClick = () => {
             if (isPlaying) {
+                  stopCurrentMusic({ invokeStop: false });
                   playAfterLoadRef.current = false;
                   stop();
-                  stopCurrentMusic({ invokeStop: false });
                   return;
             }
             if (isLoadingThisTrack) {
@@ -122,16 +122,7 @@ export const MusicToggleButton = ({ music }) => {
 
       return (
             <>
-                  <MotionDiv
-                        onClick={handleClick}
-                        key="audio"
-                        initial={{ padding: "0px 5px" }}
-                        whileHover={isLoadingThisTrack ? undefined : { padding: "0px 7px " }}
-                        whileTap={isLoadingThisTrack ? undefined : { padding: "2px 2px " }}
-                        transition={{ duration: 1, bounce: 0.2, type: "spring" }}
-                        aria-busy={isLoadingThisTrack}
-                        className={`bg-background relative rounded-full p-2 ${isLoadingThisTrack ? "pointer-events-none cursor-default" : "cursor-pointer"}`}
-                  >
+                  <MotionDiv onClick={handleClick} key="audio" initial={{ padding: "0px 5px" }} whileHover={isLoadingThisTrack ? undefined : { padding: "0px 7px " }} whileTap={isLoadingThisTrack ? undefined : { padding: "2px 2px " }} transition={{ duration: 1, bounce: 0.2, type: "spring" }} aria-busy={isLoadingThisTrack} className={`bg-background relative rounded-full p-2 ${isLoadingThisTrack ? "pointer-events-none cursor-default" : "cursor-pointer"}`}>
                         <MotionDiv
                               initial={{ opacity: 0, filter: "blur(4px)" }}
                               animate={{

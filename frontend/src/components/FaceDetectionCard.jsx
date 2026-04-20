@@ -8,7 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".
 import { MusicButton } from "./ui/skiper-ui/skiper25";
 import instance from "@/axios/base";
 import { useMusicContext } from "@/context/MusicContext";
-import { Loader } from "./ui/loader";
+import SkeletonTable from "./ui/skeleton";
 
 export default function FaceDetectionCard() {
       const videoRef = useRef(null);
@@ -34,6 +34,7 @@ export default function FaceDetectionCard() {
       };
 
       const runDetection = async () => {
+            setMusics([]);
             await startCamera();
             if (!videoRef.current) return;
             const result = await faceapi.detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
@@ -46,9 +47,14 @@ export default function FaceDetectionCard() {
 
       const init = useCallback(async () => {
             await loadModels();
-            await instance.get(`get-music?mood=${expression}`).then((res) => {
-                  setMusics(res.data.data);
-            });
+            instance
+                  .get(`get-music?mood=${expression}`)
+                  .then((res) => {
+                        setMusics(res.data.data);
+                  })
+                  .catch((error) => {
+                        console.log(error.message);
+                  });
       }, [expression]);
       useEffect(() => {
             init();
@@ -67,7 +73,7 @@ export default function FaceDetectionCard() {
                               <CardAction>{expression && <Badge className="bg-sky-50 uppercase font-semibold text-sky-800 text-xl dark:bg-sky-950 dark:text-sky-300">{expression && expression}</Badge>}</CardAction>
                               <CardTitle className={"font-semibold"}>{expression ? "Your Expressions" : "Press the button to check you expression"}</CardTitle>
                         </CardHeader>
-                        <CardFooter>
+                        <CardFooter className={" flex justify-center items-center"}>
                               <div onClick={runDetection}>
                                     <Button variant="default" size="lg">
                                           <ScanFaceIcon />
@@ -76,7 +82,7 @@ export default function FaceDetectionCard() {
                               </div>
                         </CardFooter>
                   </Card>
-                  {musics.length > 0 ? <TableUsersDemo musics={musics} /> : expression && <Loader />}
+                  {musics.length > 0 ? <TableUsersDemo musics={musics} /> : expression && <SkeletonTable />}
             </div>
       );
 }
